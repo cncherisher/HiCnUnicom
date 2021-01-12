@@ -3,7 +3,7 @@ name: 签到
 on:
   workflow_dispatch: # 手动触发
   schedule:
-    - cron: 10 06,20 * * ?
+    - cron: 15 06 * * ?
     
 jobs:
   run-it:
