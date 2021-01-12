@@ -19,10 +19,16 @@ jobs:
            time=$(curl "http://quan.suning.com/getSysTime.do")
            echo -e ${time}
  
-        - name: Run 号码1
+        - name: 运行号码1
           env:
            haoma: ${{ secrets.HAOMA }}
            mm: ${{ secrets.MM }}
            appid: ${{ secrets.APPID }}
           run: |
            bash CnUnicom.sh
+
+        - name: 删除运行日志
+          uses: smallprogram/delete-workflow-runs@main
+          with:
+           retain_days: 1
+           keep_minimum_runs: 3
