@@ -1,34 +1,32 @@
 name: 签到
 
 on:
-  workflow_dispatch: # 手动触发
+  push:
+    branches: [ master ]
+  workflow_dispatch:
   schedule:
-    - cron: 15 06 * * ?
+    - cron: 30 23 * * ?
+  watch:
+    types: started
     
 jobs:
   run-it:
     runs-on: ubuntu-latest
     name: 签到
-    if: github.event.repository.owner.id == github.event.sender.id
+    #if: github.event.repository.owner.id == github.event.sender.id
     steps:
         - name: Checkout codes
           uses: actions/checkout@v2
           
         - name: 运行时间
           run: |
-           time=$(curl "http://quan.suning.com/getSysTime.do")
-           echo -e ${time}
+           time=$(curl -s "http://quan.suning.com/getSysTime.do")
+           echo -e "当前时间：$(echo "${time}" | awk -F '":"|","' '{print $2}')"
+           
+    #设置PARAMETER的值为脚本支持的参数,如 membercenter 13800008888@112233 18388880000@123456
  
-        - name: 运行号码1
+        - name: 运行号码签到
           env:
-           haoma: ${{ secrets.HAOMA }}
-           mm: ${{ secrets.MM }}
-           appid: ${{ secrets.APPID }}
+           PARAMETER: ${{ secrets.PARAMETER }}
           run: |
-           bash CnUnicom.sh
-
-        - name: 删除运行日志
-          uses: smallprogram/delete-workflow-runs@main
-          with:
-           retain_days: 1
-           keep_minimum_runs: 3
+           bash CnUnicom.sh $PARAMETER
